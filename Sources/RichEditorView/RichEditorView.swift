@@ -35,7 +35,6 @@ import WebKit
     /// By default, this method is not used unless called by some custom JS that you add
     @objc optional func richEditor(_ editor: RichEditorView, handle action: String)
     
-    /// Called only when `canPasteWithFormat` is set to true
     /// When paste event occurs this method will be called to take any pasting custom action
     @objc optional func richEditorOnPaste(_ editor: RichEditorView, text: String)
 }
@@ -44,9 +43,8 @@ import WebKit
 private let DefaultInnerLineHeight: Int = 28
 
 public class RichEditorWebView: WKWebView {
-    /// By default this variable is true. Any contented pasted to the `RichEditorWebView`  will
-    /// contain the style format
-    public var canPasteWithFormat: Bool = true
+
+    public var canPasteWithFormat: Bool = false
     
     fileprivate var onPaste: ((String)->Void)?
     public var accessoryView: UIView?
@@ -55,9 +53,6 @@ public class RichEditorWebView: WKWebView {
     }
     
     public final override func paste(_ sender: Any?) {
-        guard !canPasteWithFormat else {
-            return super.paste(sender)
-        }
         let toPaste = UIPasteboard.general.string ?? ""
         onPaste?(toPaste)
     }
